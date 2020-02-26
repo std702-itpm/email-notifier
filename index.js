@@ -25,6 +25,7 @@ agenda.define('send email', (job, done) => {
     to: email_client, // receiver
     filename: templateToRender, // see template @ email-templates/email-sample.pug
     subject: 'Expiration Date', // custom_subject
+    firstName,
     policyID, // custom variables 
     policyName,
     localURL
