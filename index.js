@@ -6,33 +6,32 @@ const Agenda = require('agenda');
 const agenda = new Agenda({ db: { address: mongoConnectionString } });
 const nodemailer = require('nodemailer');
 
-// const mail = require("./handlers/mail"); //mail.send
+const mail = require("./helpers/mail"); //mail.send
 
-agenda.define('send email', { priority: 'high', concurrency: 10 }, function(job, done) {
-	// create reusable transporter object using the default SMTP transport
-	let transporter = nodemailer.createTransport({
-		service: process.env.EMAIL_SERVICE, // gmail
-		auth: {
-			user: process.env.EMAIL_SENDER, // email sender
-			pass: process.env.EMAIL_PASS, // email sender password
-		},
-	});
 
-	// setup email data with unicode symbols
-	let mailOptions = {
-		from: '"Reggie - IT Policy Manager" <no-reply-reggie@gmail.com>', // sender address
-		to: 'roaldjap@gmail.com', // list of receivers
-		subject: 'Expiration Notification', // Subject line
-		text: 'Hello world ?', // plain text body
-		html: '<b>Hello world ?</b>', // html body
-	};
+agenda.define('send email', (job, done) => {
 
-	// send mail with defined transport object
-	transporter.sendMail(mailOptions, function(error, res) {
-		console.log('Message sent: ' + JSON.stringify(res));
-		transporter.close();
-		done();
-	});
+  // Initialize
+  let email_client = "roaldjap@gmail.com";
+  let templateToRender = "email-sample";
+  let firstName = "Jap";
+  let policyID= "test"
+  let policyName = "Example 1";
+  let localURL = "#";
+
+
+  // send the mail - see also helpers/mail.js
+  mail.send({
+    to: email_client, // receiver
+    filename: templateToRender, // see template @ email-templates/email-sample.pug
+    subject: 'Expiration Date', // custom_subject
+    policyID, // custom variables 
+    policyName,
+    localURL
+  });
+
+  console.log("Message sent to: " + email_client);
+  done();
 });
 
 (async function() {

@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const pug = require('pug');
 const juice = require('juice');
 const htmlToText = require('html-to-text');
-const promisify = require('es6-promisify');
+const promisify = require("es6-promisify");
 
 const transport = nodemailer.createTransport({
   service: process.env.EMAIL_SERVICE,
@@ -19,7 +19,7 @@ const generateHTML = (filename, options = {}) => {
 };
 
 
-exports.send = async (options) => {
+exports.send = async (options, done) => {
   const html = generateHTML(options.filename, options);
   const text = htmlToText.fromString(html);
 
