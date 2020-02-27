@@ -15,7 +15,7 @@ agenda.define('send email', (job, done) => {
   let email_client = "roaldjap@gmail.com";
   let templateToRender = "email-sample";
   let firstName = "Jap";
-  let policyID= "test"
+  let policyId= "test"
   let policyName = "Example 1";
   let localURL = "#";
 
@@ -26,7 +26,7 @@ agenda.define('send email', (job, done) => {
     filename: templateToRender, // see template @ email-templates/email-sample.pug
     subject: 'Expiration Date', // custom_subject
     firstName,
-    policyID, // custom variables 
+    policyId, // custom variables 
     policyName,
     localURL
   });
