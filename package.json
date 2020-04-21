@@ -1,24 +1,33 @@
 {
-  "name": "email-notifier",
+  "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "agenda": "^3.0.0",
+    "agenda": "^3.1.0",
+    "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
+    "connect-mongodb-session": "^2.3.0",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
-    "es6-promisify": "^5.0.0",
-    "html-to-text": "^5.1.1",
-    "juice": "^6.0.0",
-    "nodemailer": "^6.4.3",
-    "pug": "^2.0.4"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.2"
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "moment": "^2.24.0",
+    "mongoose": "^5.8.10",
+    "morgan": "^1.9.1",
+    "nodemailer": "^6.4.2",
+    "passport": "^0.4.1",
+    "puppeteer": "^2.0.0",
+    "save": "^2.4.0",
+    "session-file-store": "^1.3.1",
+    "stripe": "^7.15.0",
+    "uuid": "^3.4.0"
   }
 }

@@ -1,42 +1,124 @@
-// see usage: https://www.npmjs.com/package/dotenv
-require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const mongoose = require('mongoose');
+var session = require('express-session');
+var MongoDBStore = require('connect-mongodb-session')(session);
 
-const mongoConnectionString = process.env.DB_URL;
+const Nodemailer = require('nodemailer');
+const mongoConnectionString = "mongodb://127.0.0.1/it_psych_db";
 const Agenda = require('agenda');
 const agenda = new Agenda({ db: { address: mongoConnectionString } });
-const nodemailer = require('nodemailer');
 
-const mail = require("./helpers/mail"); //mail.send
+const SubscribedPolicy=require("./controllers/subscribedPolicyController.js");
+const ExpiredPolicy=require("./controllers/policyExpirationController.js");
 
+// Define routes here
+const indexRoute = require('./routes');
 
-agenda.define('send email', (job, done) => {
+// invoke express on port 5200
+const app = express();
+const port = process.env.PORT || 5200;
 
-  // Initialize
-  let email_client = "roaldjap@gmail.com";
-  let templateToRender = "email-sample";
-  let firstName = "Jap";
-  let policyId= "test"
-  let policyName = "Example 1";
-  let localURL = "#";
+require('dotenv').config();
 
 
-  // send the mail - see also helpers/mail.js
-  mail.send({
-    to: email_client, // receiver
-    filename: templateToRender, // see template @ email-templates/email-sample.pug
-    subject: 'Expiration Date', // custom_subject
-    firstName,
-    policyId, // custom variables 
-    policyName,
-    localURL
-  });
-
-  console.log("Message sent to: " + email_client);
-  done();
+var store = new MongoDBStore({
+  uri: process.env.DATABASE_URL,
+  collection: 'sessions',
+  unset: 'destroy'
 });
 
-(async function() {
-	await agenda.start();
+store.on('error', function (error) {
+  console.log(error);
+});
 
-	await agenda.every('1 minute', 'send email');
+app.use(session({
+  secret: 'Somesercrets',
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 1 // 1 day
+  },
+  //store: store,
+  resave: true,
+  saveUninitialized: false
+}));
+
+mongoose.connect(process.env.DATABASE_URL, {
+  useNewUrlParser: true,
+  useFindAndModify: false 
+});
+const connection = mongoose.connection;
+
+connection.once('open', function () {
+  console.log("MongoDB database connection established successfully");
+})
+
+app.use(cors());
+app.use(express.json());
+
+// invoke routes
+//app.use('/', indexRoute);
+
+
+app.listen(port, function () {
+  console.log("Server is running on Port: " + port);
+});
+
+
+// (async function() {
+//   await agenda.start();
+
+//   await agenda.every('1 minute', 'send email');
+// })();
+
+// // Email Notification for Registration 
+// //set up transporter
+// const transporter = Nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//          user: 'itpsychiatrist.policymanager@gmail.com',
+//          pass: 'Aspire2CKD'
+//      }
+// })
+
+// agenda.define('send email', (job, done) => {
+                
+//   const mailOptions={
+//   from: 'itpsychiatrist.policymanager@gmail.com', // sender address
+//   to: "pooja.khaire@yahoo.com", 
+//   subject:'The policy is not reviewed',
+//   html: 'Please review the policy as soon as possible.' + '</br>' +
+//       'Thank you.' + '</br>'+
+//       'Regards,' + '</br'+
+//       'IT Policy Manager'
+// };
+// transporter.sendMail(mailOptions,function(err,info){
+//   if(err){
+//       console.log(err);
+//   }
+//   else{
+//       console.log(info);
+//   }
+// })
+// done();
+
+(async function() {
+  await agenda.start();
+
+  await agenda.every('5 minutes', 'send email');
+  await agenda.every('5 minutes', 'send expiry notification');
 })();
+
+agenda.define('send email',(job,done)=>{
+  SubscribedPolicy.subscribedPolicyGet({
+    textIs:"I am in Company.companyGet"
+  });
+  done();  
+});  
+agenda.define('send expiry notification',(job,done)=>{
+  ExpiredPolicy.isPolicyExpired({
+    textIs:"I am in ExpiredPolicy.isPolicyExpired"
+  });
+  done();  
+}); 
+
+module.exports = app;
