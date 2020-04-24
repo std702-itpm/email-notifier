@@ -68,7 +68,11 @@ function sendMail(companyId,policyName,days){
                         from:"itpsychiatrist.policymanager@gmail.com",
                         to:response.company_email,
                         subject: "The" + " " + policyName + " " + "is expiring soon.",
-                        html: "The " + policyName + " " + "is going to expire in " + days + "days."
+                        html: "The " + policyName + " " + "is going to expire in " + days + "days.</br></br>" +
+                              "Go to the Reggie Platform and login with your username and password to update policy subscription.</br></br>" +
+                              "Thank you.</br></br></br>" +
+                              "Regards,</br></br></br>" +
+                              "Reggie(IT Policy Manager)"
                     }
                     transporter.sendMail(mailOption,function(err,info){
                         if(err){console.log("Error is: "+err)}

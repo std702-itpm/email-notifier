@@ -54,7 +54,7 @@ function getUser(reviewers,id)
                     let days = now.diff(firstEmailDate, 'days');
                     
                     console.log(response.email+"date is: "+days);
-                    if(days===15){
+                    if(days===3){
                      const mailOptions={
                       from: 'itpsychiatrist.policymanager@gmail.com', // sender address
                       to: response.email, 
